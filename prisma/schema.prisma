@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User{
+
+id    Int     @id @default(autoincrement())
+name  String 
+createDate DateTime @default(now())
+imageurl String 
+profession String
+description String
+roll Role @default(ADMIN)
+isActive Boolean @default(true)
+Posts Post[]
+}
+enum Role {
+  USER
+  ADMIN
+  SETAD
+}
+
+model Post {
+id    Int     @id @default(autoincrement())
+title String
+imagUrl String 
+article String
+Slug String
+createDate DateTime @default(now())
+updateDate  DateTime @default(now())
+author    User    @relation(fields: [authorId], references: [id])
+authorId  Int
+youtubeUrl String
+aparatUri String
+description String
+comments Comment[]
+postsClickBanks PostsClickBank[] 
+categoryPosts CategoryPost[]
+
+}
+model Comment{
+  id    Int     @id @default(autoincrement())
+  description String
+  username String
+  email String 
+  post    Post    @relation(fields: [postId], references: [id])
+  postId Int @unique
+}
+
+model ClickBank{
+id    Int     @id @default(autoincrement())
+clickBankurl String 
+nickName String
+title String
+postsClickBanks PostsClickBank[] 
+}
+
+model PostsClickBank{
+  id    Int     @id @default(autoincrement())
+  post    Post    @relation(fields: [postId], references: [id])
+  postId Int @unique
+  ClickBank   ClickBank    @relation(fields: [ClickBankId], references: [id])
+  ClickBankId Int @unique
+}
+
+//self relation 
+model Category {
+   id    Int     @id @default(autoincrement())
+   name String 
+   categoryPosts CategoryPost[]
+   parentId Int
+   Category   Category?   @relation("categoryparent", fields: [parentId], references: [id])
+   categories  Category[]  @relation("categoryparent")
+
+
+}
+
+model CategoryPost{
+
+    id    Int     @id @default(autoincrement())
+  post    Post    @relation(fields: [postId], references: [id])
+  postId Int @unique
+  category   Category    @relation(fields: [categoryId], references: [id])
+  categoryId Int @unique
+}
