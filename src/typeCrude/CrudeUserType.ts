@@ -6,5 +6,17 @@ export type UserType ={
     imageurl: string;
     profession: string;
     description: string;
+    roll:string;
+    password:string
 
+}
+
+export type AuthPayload ={
+  token: string
+  user: UserType
+}
+
+export type MutationMassage ={
+  massage: string
+  status: boolean
 }

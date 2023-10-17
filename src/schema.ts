@@ -1,6 +1,8 @@
-import { createSchema, createYoga } from 'graphql-yoga';
-import {createuser,diactiveUser,findeAllUser,findeUser, updateUser} from './resolver/CrudUser'
+import { createSchema, createYoga ,YogaInitialContext} from 'graphql-yoga';
+import {createuser,diactiveUser,findeAllUser,findeUser, updateUser,loginUser} from './resolver/CrudUser'
 import { objectEnumNames } from '@prisma/client/runtime/library';
+import { GraphQLContext} from './utiles/contextType'; 
+import { authenticateUser } from './utiles/authenticateUser';
 
 export const graphQLServer = createYoga({
   schema: createSchema({
@@ -11,11 +13,15 @@ export const graphQLServer = createYoga({
         findeUser(id: Int): User
         diactiveUser(id: Int): String
         findeAllUser(skip:Int ,take:Int):[User]
+
+
       }
       type Mutation {
         getFileName(file: File!): String
-        createUser( name: String ,profession: String,imageurl:String,description:String): String
-        updateUser(id:Int, name: String ,profession: String,imageurl:String,description:String): String
+        createUser(name: String ,password:String,profession: String,imageurl:String,description:String): MutationMassage
+        updateUser(id:Int, name: String,password: String,profession: String,imageurl:String,description:String): MutationMassage
+        loginUser(id: Int, password: String!): AuthPayload
+        
 
       }
       type Subscription {
@@ -27,31 +33,52 @@ export const graphQLServer = createYoga({
         profession: String!
         imageurl: String
         description: String
+        roll: String
+        password:String
       }
+      type AuthPayload {
+       token: String
+       user: User
+       }
+       type MutationMassage{
+        massage: String
+        status: Boolean
+       }
+
 
     `,
     resolvers: {
       Query: {
-        hello: () => 'world',
-        findeUser:async(root,args :{id:number})=>{
-          return await findeUser(args.id);
+        hello: (_, __, context) => {
+          // Access the user data from the context
+          //console.log(context.currentUser);
+          return 'Hello, World!';
         },
-        diactiveUser:async(root,args :{id:number})=>{
-          return await diactiveUser(args.id)
+        findeUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
+          
+          return await findeUser(args.id,ctx);
         },
-        findeAllUser:async(root,args :{skip:number;take:number})=>{
-          return await findeAllUser(args.skip,args.take)
-        }
+        diactiveUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
+          return await diactiveUser(args.id,ctx)
+        },
+        findeAllUser:async(root,args :{skip:number;take:number},ctx :GraphQLContext)=>{
+          return await findeAllUser(args.skip,args.take,ctx)
+        },
+
         
       },
       Mutation: {
         getFileName: (root, { file }: { file: File }) => file.name,
-        createUser:async(root :unknown, args :{name: string; imageurl: string ;description: string;profession:string})=>{
-        return await createuser(args.name,args.profession,args.description,args.imageurl);
+        createUser:async(root :unknown, args :{idSetad:number ;name: string;password:string ; imageurl: string ;description: string;profession:string ;},ctx :GraphQLContext)=>{
+        return await createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx);
       },
-      updateUser:async(root :unknown, args :{id:number;name: string; imageurl: string ;description: string;profession:string})=>{
-        return await updateUser(args.id,args.name,args.profession,args.description,args.imageurl);
+      updateUser:async(root :unknown, args :{id:number;name: string;password:string; imageurl: string ;description: string;profession:string},ctx :GraphQLContext)=>{
+        return await updateUser(args.id,args.name,args.password,args.profession,args.description,args.imageurl,ctx);
+      },
+      loginUser:async(root:unknown, args: { id: number; password: string },ctx :GraphQLContext)=>{
+        return await loginUser(args.id,args.password,ctx)
       }
+
       
       },
       Subscription: {
@@ -66,5 +93,8 @@ export const graphQLServer = createYoga({
       },
     },
   }),
+  context:async ({ request } )=> {
+    return { currentUser : await authenticateUser(request) ?? null}
+  },
   logging: false,
 });

@@ -9,6 +9,7 @@ CREATE TABLE "User" (
     "imageurl" TEXT NOT NULL,
     "profession" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "roll" "Role" NOT NULL DEFAULT 'ADMIN',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
 
@@ -79,6 +80,9 @@ CREATE TABLE "CategoryPost" (
 
     CONSTRAINT "CategoryPost_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Comment_postId_key" ON "Comment"("postId");
