@@ -2,7 +2,7 @@ import { PrismaClient ,Role} from '@prisma/client'
 import { UserType } from '../typeCrude/CrudeUserType';
 
 const prisma =new PrismaClient();
-export const  findeUser=async(id:number):Promise<UserType> =>{
+export const  findeUserPublic=async(id:number):Promise<UserType> =>{
     try {
       const user =await prisma.user.findUnique({
         
@@ -12,7 +12,7 @@ export const  findeUser=async(id:number):Promise<UserType> =>{
         },
     
       })
-      
+         
       if(user ==null){    
         throw "hamchin useri vojod nadarad"
           
@@ -24,7 +24,8 @@ export const  findeUser=async(id:number):Promise<UserType> =>{
           profession:user.profession,
           imageurl:user.imageurl,
           description:user.description,
-          roll:user.roll
+          roll:user.roll,
+          isActive:user.isActive
       }
     } catch (error) {
       throw error

@@ -8,7 +8,7 @@ export type UserType ={
     description: string;
     roll:string;
     password:string
-
+    isActive:boolean
 }
 
 export type AuthPayload ={

@@ -5,15 +5,14 @@ import { compare, hash } from 'bcryptjs'
 import {  sign } from 'jsonwebtoken'
 import { YogaInitialContext } from 'graphql-yoga'
 import {authenticateUser} from '../utiles/authenticateUser'
+import { findeUserPublic } from '../utiles/findeUserPublic'
 
 const prisma = new PrismaClient()
 
-export const  findeUser=async(id:number,context :GraphQLContext):Promise<UserType> =>{
+export const findeUser=async(id:number,context :GraphQLContext):Promise<UserType> =>{
   try {
-        
-    const adminuser =context.currentUser
-    
-    if (adminuser !==null && adminuser.roll!==Role.SETAD ){
+    const adminuser =context.currentUser;
+    if (adminuser == null || adminuser.roll !== Role.SETAD ){
 
      throw "datresi nadari"
     } 
@@ -30,14 +29,17 @@ export const  findeUser=async(id:number,context :GraphQLContext):Promise<UserTyp
       throw "hamchin useri vojod nadarad"
         
     }
+  
+    
     return {
-      password:user.password,
+        password:user.password,
         id:user.id,
         name:user.name,
         profession:user.profession,
         imageurl:user.imageurl,
         description:user.description,
-        roll:user.roll
+        roll:user.roll,
+        isActive: user.isActive
     }
   } catch (error) {
     throw error
@@ -54,7 +56,7 @@ export const  diactiveUser=async(id:number,context :GraphQLContext) : Promise<Mu
     }
     const adminuser =context.currentUser
     
-    if (adminuser !==null && adminuser.roll!==Role.SETAD ){
+    if (adminuser == null || adminuser.roll !== Role.SETAD ){
 
       throw new Error("not permission")
     } 
@@ -72,8 +74,11 @@ export const  diactiveUser=async(id:number,context :GraphQLContext) : Promise<Mu
       
   
     });
+
+
+    
     if(user !== null && user.isActive ==false){
-     
+ 
       obj.massage ="success"
       obj.status =true
       return obj;
@@ -89,16 +94,16 @@ export const  diactiveUser=async(id:number,context :GraphQLContext) : Promise<Mu
   }
  
 } 
-
-
 export const findeAllUser=async(skip:number,take:number,context :GraphQLContext):Promise<UserType[]>=>{
   try {
-    const adminuser =context.currentUser
     
-    if (adminuser !==null && adminuser.roll!==Role.SETAD ){
+    
+    const adminuser =context.currentUser
+    if (adminuser == null || adminuser.roll !== Role.SETAD){
 
         throw "dastresi nadari"
     } 
+    
     
     const users =await prisma.user.findMany({
         skip: skip,
@@ -107,6 +112,8 @@ export const findeAllUser=async(skip:number,take:number,context :GraphQLContext)
           name: 'desc',
         },
       });
+
+      
       return users;
   } catch (error) {
     throw error
@@ -126,10 +133,10 @@ export const updateUser=async(id:number,name:string,password:string ,profession:
       status :false
     }
     const adminuser =context.currentUser
-    console.log(adminuser);
+
     
     
-    if (adminuser !==null && adminuser.roll!==Role.SETAD ){
+    if (adminuser == null || adminuser.roll !== Role.SETAD ){
 
        obj.massage ="fail dastresi nadri"
        obj.status =false
@@ -176,11 +183,15 @@ export const loginUser=async (id: number, password: string,context:GraphQLContex
       throw ' '
     }
 
-    const user = await findeUser(id,context);
+    const user = await findeUserPublic(id);
+    
+    
     const valid = await compare(password, user.password)
     if (!valid) {
       throw new Error('Invalid password')
     }
+  
+    
     const token = sign({exp: Math.floor(Date.now() / 1000) + (60 * 60), userId: user.id }, privateKey )
  
     // 3
@@ -201,17 +212,12 @@ export const createuser=async(name:string,password:string ,profession:string ,im
     }
     const adminuser =context.currentUser
 
-    if (adminuser !==null && adminuser.roll!==Role.SETAD ){
+    if (adminuser == null || adminuser.roll !== Role.SETAD ){
 
       throw new Error("not permission")
     } 
     //const currentUser = await authenticateUser(context.request);
     //console.log(context.currentUser);
-
-      if (context.currentUser === null) {
-
-        throw new Error('Unauthenticated!')
-      } 
 
       const passwordHAsh = await hash(password, 10);
       

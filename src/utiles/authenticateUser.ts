@@ -1,5 +1,5 @@
 import { JwtPayload, verify } from 'jsonwebtoken'
-import { findeUser } from './findeUserPublic'
+import { findeUserPublic } from './findeUserPublic'
 import { UserType } from '../typeCrude/CrudeUserType'
 
 
@@ -10,10 +10,7 @@ export const authenticateUser = async(
 
     try {
 
-        const header = request.headers.get('authorization')
-
-        
-        
+        const header = request.headers.get('authorization')  
         const privateKey=process.env.secret_key;
         if(privateKey == undefined){
             throw "seretkey vojod nadard"
@@ -21,7 +18,6 @@ export const authenticateUser = async(
         if(header ==null){
             return null
         }
-
         const token = header.split(' ')[1]
 
         
@@ -31,7 +27,7 @@ export const authenticateUser = async(
         
         const userId = tokenPayload.userId
             
-         const user =await findeUser(userId);
+         const user =await findeUserPublic(userId);
        
           return user
 

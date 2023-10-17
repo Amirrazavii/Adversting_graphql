@@ -11,18 +11,15 @@ export const graphQLServer = createYoga({
       type Query {
         hello: String
         findeUser(id: Int): User
-        diactiveUser(id: Int): String
         findeAllUser(skip:Int ,take:Int):[User]
-
 
       }
       type Mutation {
         getFileName(file: File!): String
         createUser(name: String ,password:String,profession: String,imageurl:String,description:String): MutationMassage
         updateUser(id:Int, name: String,password: String,profession: String,imageurl:String,description:String): MutationMassage
+        diactiveUser(id: Int): MutationMassage
         loginUser(id: Int, password: String!): AuthPayload
-        
-
       }
       type Subscription {
         countdown(from: Int!): Int!
@@ -35,6 +32,7 @@ export const graphQLServer = createYoga({
         description: String
         roll: String
         password:String
+        isActive:Boolean
       }
       type AuthPayload {
        token: String
@@ -58,9 +56,6 @@ export const graphQLServer = createYoga({
           
           return await findeUser(args.id,ctx);
         },
-        diactiveUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
-          return await diactiveUser(args.id,ctx)
-        },
         findeAllUser:async(root,args :{skip:number;take:number},ctx :GraphQLContext)=>{
           return await findeAllUser(args.skip,args.take,ctx)
         },
@@ -69,6 +64,9 @@ export const graphQLServer = createYoga({
       },
       Mutation: {
         getFileName: (root, { file }: { file: File }) => file.name,
+        diactiveUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
+          return await diactiveUser(args.id,ctx)
+        },
         createUser:async(root :unknown, args :{idSetad:number ;name: string;password:string ; imageurl: string ;description: string;profession:string ;},ctx :GraphQLContext)=>{
         return await createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx);
       },
