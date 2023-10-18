@@ -1,8 +1,12 @@
 import { createSchema, createYoga ,YogaInitialContext} from 'graphql-yoga';
-import {createuser,diactiveUser,findeAllUser,findeUser, updateUser,loginUser} from './resolver/CrudUser'
+import {CruudeUserClass} from './resolver/CrudUser'
+//import {createuser,diactiveUser,findeAllUser,findeUser, updateUser,loginUser} from './resolver/CrudUser'
 import { objectEnumNames } from '@prisma/client/runtime/library';
 import { GraphQLContext} from './utiles/contextType'; 
 import { authenticateUser } from './utiles/authenticateUser';
+
+const crudeUser =new CruudeUserClass();
+
 
 export const graphQLServer = createYoga({
   schema: createSchema({
@@ -54,10 +58,10 @@ export const graphQLServer = createYoga({
         },
         findeUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
           
-          return await findeUser(args.id,ctx);
+          return await crudeUser.findeUser(args.id,ctx,false);
         },
         findeAllUser:async(root,args :{skip:number;take:number},ctx :GraphQLContext)=>{
-          return await findeAllUser(args.skip,args.take,ctx)
+          return await crudeUser.findeAllUser(args.skip,args.take,ctx,false)
         },
 
         
@@ -65,16 +69,16 @@ export const graphQLServer = createYoga({
       Mutation: {
         getFileName: (root, { file }: { file: File }) => file.name,
         diactiveUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
-          return await diactiveUser(args.id,ctx)
+          return await crudeUser.diactiveUser(args.id,ctx,false)
         },
         createUser:async(root :unknown, args :{idSetad:number ;name: string;password:string ; imageurl: string ;description: string;profession:string ;},ctx :GraphQLContext)=>{
-        return await createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx);
+        return await crudeUser.createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx,false);
       },
       updateUser:async(root :unknown, args :{id:number;name: string;password:string; imageurl: string ;description: string;profession:string},ctx :GraphQLContext)=>{
-        return await updateUser(args.id,args.name,args.password,args.profession,args.description,args.imageurl,ctx);
+        return await crudeUser.updateUser(args.id,args.name,args.password,args.profession,args.description,args.imageurl,ctx,false);
       },
       loginUser:async(root:unknown, args: { id: number; password: string },ctx :GraphQLContext)=>{
-        return await loginUser(args.id,args.password,ctx)
+        return await crudeUser.loginUser(args.id,args.password,ctx)
       }
 
       
