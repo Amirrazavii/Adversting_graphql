@@ -9,19 +9,22 @@ export const authenticateUser = async(
     
 
     try {
-
-        const header = request.headers.get('authorization')  
         const privateKey=process.env.secret_key;
         if(privateKey == undefined){
             throw "seretkey vojod nadard"
         }
+        // console.log(request.headers);
+        
+        const header = request.headers.get('authorization')  
+        //console.log(header);
         if(header ==null){
             return null
         }
+        console.log(header);
+        
+        
         const token = header.split(' ')[1]
 
-        
-        
         const tokenPayload = verify(token, privateKey) as JwtPayload
 
         

@@ -75,7 +75,7 @@ export const graphQLServer = createYoga({
         return await crudeUser.createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx,false);
       },
       updateUser:async(root :unknown, args :{id:number;name: string;password:string; imageurl: string ;description: string;profession:string},ctx :GraphQLContext)=>{
-        return await crudeUser.updateUser(args.id,args.name,args.password,args.profession,args.description,args.imageurl,ctx,false);
+        return await crudeUser.updateUser(args.id,args.name,args.password,args.profession,args.imageurl,args.description,ctx,false);
       },
       loginUser:async(root:unknown, args: { id: number; password: string },ctx :GraphQLContext)=>{
         return await crudeUser.loginUser(args.id,args.password,ctx)

@@ -10,8 +10,9 @@ export const  findeUserPublic=async(id:number):Promise<UserType> =>{
           id: id,
       
         },
-    
       })
+
+      
          
       if(user ==null){    
         throw "hamchin useri vojod nadarad"

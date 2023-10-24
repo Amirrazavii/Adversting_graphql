@@ -199,15 +199,21 @@ export class CruudeUserClass{
     }
   }
   
-  async loginUser (id: number, password: string,context:GraphQLContext,statusContext:boolean =false){
+  async loginUser(id: number, password: string,context:GraphQLContext,statusContext:boolean =false){
   
+ 
+    
     try {
       const privateKey=process.env.secret_key;
       if(privateKey ==undefined){
         throw ' '
       }
+
+      
   
       const user = await findeUserPublic(id);
+
+      
       
       
       const valid = await compare(password, user.password)
@@ -235,13 +241,6 @@ export class CruudeUserClass{
         massage :"",
         status :false
       }
-      // const adminuser =context.currentUser
-  
-      // if (adminuser == null || adminuser.roll !== Role.SETAD ){
-  
-      //   throw new Error("not permission")
-      // } 
-      
       if (statusContext ==false) {
         throw "error"
         

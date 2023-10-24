@@ -8,8 +8,6 @@ export const roleDecorator= (target: any, propertyKey: string,descriptor: Proper
     descriptor.value = function(...args: any[]){
         const args2 =args[args.length - 2]
         const adminuser= args2.currentUser
-        
-
         if (adminuser == null || adminuser.roll !== Role.SETAD ){
     
             args[args.length -1] = false
