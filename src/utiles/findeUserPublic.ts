@@ -2,12 +2,12 @@ import { PrismaClient ,Role} from '@prisma/client'
 import { UserType } from '../typeCrude/CrudeUserType';
 
 const prisma =new PrismaClient();
-export const  findeUserPublic=async(id:number):Promise<UserType> =>{
+export const  findeUserPublic=async(email:string):Promise<UserType> =>{
     try {
       const user =await prisma.user.findUnique({
         
         where: {
-          id: id,
+          email: email,
       
         },
       })

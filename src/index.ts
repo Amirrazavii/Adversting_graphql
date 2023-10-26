@@ -4,6 +4,25 @@ import 'dotenv/config';
 import {authenticateUser} from './utiles/authenticateUser';
 import router from "./router/index"
 import cors from "cors"
+import { createClient } from 'redis';
+import nodemailer from 'nodemailer'
+
+export const transporter = nodemailer.createTransport({
+  service: 'Gmail', // Use your email service provider (e.g., 'Gmail', 'Outlook', 'Yahoo')
+  auth: {
+    user: process.env.email, // Your email address
+    pass: process.env.pass // Your email password or an app-specific password
+  }
+});
+
+export let client:any;
+
+(async function craeteClientRedis() {
+   client = await createClient()
+    .on('error', err => console.log('Redis Client Error', err))
+    .connect();
+  
+})();
 
 const app = express();
 

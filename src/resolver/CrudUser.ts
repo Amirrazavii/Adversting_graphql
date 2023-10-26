@@ -1,5 +1,5 @@
 import { PrismaClient ,Role, User } from '@prisma/client'
-import { UserType,MutationMassage } from '../typeCrude/CrudeUserType'
+import { UserType,MutationMassage,AuthPayload } from '../typeCrude/CrudeUserType'
 import { GraphQLContext } from '../utiles/contextType'
 import { compare, hash } from 'bcryptjs'
 import {  sign } from 'jsonwebtoken'
@@ -199,7 +199,7 @@ export class CruudeUserClass{
     }
   }
   
-  async loginUser(id: number, password: string,context:GraphQLContext,statusContext:boolean =false){
+  async loginUser(email: string, password: string,context:GraphQLContext,statusContext:boolean =false) :Promise<AuthPayload>{
   
  
     
@@ -211,7 +211,7 @@ export class CruudeUserClass{
 
       
   
-      const user = await findeUserPublic(id);
+      const user = await findeUserPublic(email);
 
       
       

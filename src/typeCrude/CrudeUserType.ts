@@ -13,7 +13,7 @@ export type UserType ={
 
 export type AuthPayload ={
   token: string
-  user: UserType
+  user: UserType | string
 }
 
 export type MutationMassage ={

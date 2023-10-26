@@ -1,5 +1,4 @@
 import express from 'express';
-import { createSchema, createYoga } from 'graphql-yoga';
 import {graphQLServer} from './schema'
 
 

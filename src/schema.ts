@@ -1,5 +1,6 @@
 import { createSchema, createYoga ,YogaInitialContext} from 'graphql-yoga';
 import {CruudeUserClass} from './resolver/CrudUser'
+import {findeUserEmail,checkCode}from './resolver/loginEmail'
 //import {createuser,diactiveUser,findeAllUser,findeUser, updateUser,loginUser} from './resolver/CrudUser'
 import { objectEnumNames } from '@prisma/client/runtime/library';
 import { GraphQLContext} from './utiles/contextType'; 
@@ -16,6 +17,7 @@ export const graphQLServer = createYoga({
         hello: String
         findeUser(id: Int): User
         findeAllUser(skip:Int ,take:Int):[User]
+        
 
       }
       type Mutation {
@@ -23,7 +25,9 @@ export const graphQLServer = createYoga({
         createUser(name: String ,password:String,profession: String,imageurl:String,description:String): MutationMassage
         updateUser(id:Int, name: String,password: String,profession: String,imageurl:String,description:String): MutationMassage
         diactiveUser(id: Int): MutationMassage
-        loginUser(id: Int, password: String!): AuthPayload
+        loginUser(email: String, password: String!): AuthPayload
+        loginEmail(email: String): MutationMassage
+        checkCode(email: String ,code:String): AuthPayload
       }
       type Subscription {
         countdown(from: Int!): Int!
@@ -77,11 +81,15 @@ export const graphQLServer = createYoga({
       updateUser:async(root :unknown, args :{id:number;name: string;password:string; imageurl: string ;description: string;profession:string},ctx :GraphQLContext)=>{
         return await crudeUser.updateUser(args.id,args.name,args.password,args.profession,args.imageurl,args.description,ctx,false);
       },
-      loginUser:async(root:unknown, args: { id: number; password: string },ctx :GraphQLContext)=>{
-        return await crudeUser.loginUser(args.id,args.password,ctx)
+      loginUser:async(root:unknown, args: { email: string; password: string },ctx :GraphQLContext)=>{
+        return await crudeUser.loginUser(args.email,args.password,ctx)
+      },
+      loginEmail:async(root:unknown,args: {email: string},ctx :GraphQLContext)=>{
+        return await findeUserEmail(args.email)
+      },
+      checkCode:async(root:unknown,args: {email: string ,code:String})=>{
+        return await checkCode(args.email,args.code)
       }
-
-      
       },
       Subscription: {
         countdown: {
