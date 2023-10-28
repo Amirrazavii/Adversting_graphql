@@ -1,5 +1,5 @@
 import { JwtPayload, verify } from 'jsonwebtoken'
-import { findeUserPublic } from './findeUserPublic'
+import { findeUserPublicById } from './findeUserPublic'
 import { UserType } from '../typeCrude/CrudeUserType'
 
 
@@ -16,21 +16,23 @@ export const authenticateUser = async(
         // console.log(request.headers);
         
         const header = request.headers.get('authorization')  
-        //console.log(header);
+        console.log(header);
         if(header ==null){
             return null
-        }
-        console.log(header);
-        
+        }     
         
         const token = header.split(' ')[1]
 
         const tokenPayload = verify(token, privateKey) as JwtPayload
+    
+        
 
         
         const userId = tokenPayload.userId
             
-         const user =await findeUserPublic(userId);
+         const user =await findeUserPublicById(userId);
+
+         
        
           return user
 

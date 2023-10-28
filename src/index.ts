@@ -17,7 +17,7 @@ export const transporter = nodemailer.createTransport({
 
 export let client:any;
 
-(async function craeteClientRedis() {
+(async function createClientRedis() {
    client = await createClient()
     .on('error', err => console.log('Redis Client Error', err))
     .connect();
@@ -50,3 +50,5 @@ app.listen(Port, () => {
 
   console.log(`GraphQL API located at http://localhost:${Port}${endpoint}`);
 });
+
+export default app;

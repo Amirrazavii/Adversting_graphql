@@ -75,7 +75,7 @@ export const graphQLServer = createYoga({
         diactiveUser:async(root,args :{id:number},ctx :GraphQLContext)=>{
           return await crudeUser.diactiveUser(args.id,ctx,false)
         },
-        createUser:async(root :unknown, args :{idSetad:number ;name: string;password:string ; imageurl: string ;description: string;profession:string ;},ctx :GraphQLContext)=>{
+        createUser:async(root :unknown, args :{name: string;password:string ; imageurl: string ;description: string;profession:string ;},ctx :GraphQLContext)=>{
         return await crudeUser.createuser(args.name,args.password, args.profession,args.description,args.imageurl,ctx,false);
       },
       updateUser:async(root :unknown, args :{id:number;name: string;password:string; imageurl: string ;description: string;profession:string},ctx :GraphQLContext)=>{

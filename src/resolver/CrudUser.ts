@@ -183,8 +183,10 @@ export class CruudeUserClass{
           
         },
       })
+      console.log(user);
       
-      if (user !==null) {
+      
+      if (user !== null) {
         obj.massage ="success"
         obj.status =true
         return obj;
